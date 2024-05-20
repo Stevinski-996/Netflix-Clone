@@ -33,7 +33,7 @@ const handleUpdate = (e) => {
   e.preventDefault();
   const updatedComment = { comment: newComment };
 
-  const url = `https://movies-library-89zp.onrender.com/UPDATE/${movie.id}`;
+  const url = `${process.env.REACT_APP_URL}/UPDATE/${movie.id}`;
   axios
     .put(url, updatedComment)
     .then((response) => {

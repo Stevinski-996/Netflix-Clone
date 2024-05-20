@@ -16,7 +16,7 @@ Render the ModalMovie component and send the data to the component
 
 */
 const getDataFromServer = () => {
- const url = "https://movies-library-89zp.onrender.com/trending";
+ const url = `${process.env.REACT_APP_URL}/trending`;
  axios
    .get(url)
    .then((result) => {

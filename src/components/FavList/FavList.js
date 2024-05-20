@@ -16,7 +16,7 @@ function FavList() {
   };
 
   const handleFavMovie = () => {
-    const url = "https://movies-library-89zp.onrender.com/getMovie";
+    const url = `${process.env.REACT_APP_URL}/getMovie`;
     axios
       .get(url)
       .then((result) => {
@@ -30,7 +30,7 @@ function FavList() {
   };
 
   const deleteMovie = (id) => {
-    const url = `https://movies-library-89zp.onrender.com/DELETE/${id}`;
+    const url = `${process.env.REACT_APP_URL}/DELETE/${id}`;
     axios
       .delete(url)
       .then((result) => {
