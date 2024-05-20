@@ -1,22 +1,13 @@
 import Nav from 'react-bootstrap/Nav';
+import { Link, useLocation } from 'react-router-dom';
 
 function NavBar() {
+  const location = useLocation();
+
   return (
-    <Nav justify  defaultActiveKey="/home" className="bg-dark ">
-      <Nav.Item>
-        <Nav.Link href="/home">Active</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link eventKey="link-1">Loooonger NavLink</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link eventKey="link-2">Link</Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link eventKey="disabled">
-          Disabled
-        </Nav.Link>
-      </Nav.Item>
+    <Nav justify className="bg-dark">
+      <Nav.Link as={Link} to="/" active={location.pathname === '/'}>Home</Nav.Link>
+      <Nav.Link as={Link} to="/fav" active={location.pathname === '/fav'}>FavList</Nav.Link>
     </Nav>
   );
 }

@@ -1,59 +1,96 @@
 import axios from "axios";
+import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-function ModalMovie(props) {
-  const sendTheMovieToDB = (movie) => {
-    const url = "https://movies-library-89zp.onrender.com/ddMovie";
-    const filtereData = {
-      title: movie.title,
-      poster_path: movie.poster,
-      releas_data: movie.releas_data,
-      ovierview: movie.ovierview,
-      comment: movie.comment
-    }
-    console.log(movie);
-    axios
-      .post(url, filtereData)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+function ModalMovie({ movie, handleClose, show, location, handleShow}) {
+  console.log(show)
+  const [newComment, setNewComment] = useState("");
 
-  return (
-    <div
-      className="modal show"
-      style={{ display: "block", position: "initial" }}
-    >
-      <Modal show={props.show} onHide={props.handleClose}>
-        <Modal.Header closeButton></Modal.Header>
-        <Modal.Body>
-          <img
-            src={`https://image.tmdb.org/t/p/w185${props.movie.data.poster_path}`}
-            alt={props.movie.data.image}
+  if (!movie) return null; // Don't render until movie data is available
+
+  const sendTheMovieToDB = async () => {
+    const url = `https://movies-library-89zp.onrender.com/addMovie`;
+
+    const filteredData = {
+      title: movie.title,
+      poster_path: movie.poster_path || movie.poster,
+      release_date: movie.release_date,
+      overview: movie.overview,
+      comment: newComment,
+    };
+
+    try {
+      const response = await axios.post(url, filteredData);
+      console.log("Movie added to DB:", response.data);
+    } catch (error) {
+      console.error("Error adding movie to DB:", error);
+    }
+  };
+ 
+
+const handleUpdate = (e) => {
+  e.preventDefault();
+  const updatedComment = { comment: newComment };
+
+  const url = `https://movies-library-89zp.onrender.com/UPDATE/${movie.id}`;
+  axios
+    .put(url, updatedComment)
+    .then((response) => {
+      console.log(response);
+      movie.handleClose();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+return (
+  <Modal  show={show || handleShow} onHide={handleClose}>
+    <Modal.Header closeButton>
+      <Modal.Title>{movie?.title}</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <img
+        src={`https://image.tmdb.org/t/p/w185${movie.poster_path || movie.data.poster_path}`}
+        alt={movie.title || 'Movie Poster'}
+      />
+      <form onSubmit={handleUpdate}>
+        <div className="form-group">
+          <label htmlFor="comment">Update Comment</label>
+          <input
+            type="text"
+            className="form-control"
+            id="comment"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            required
           />
-        </Modal.Body>
-        <Modal.Body>{props.movie.data.title}</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={props.handleClose}>
-            Close
-          </Button>
+        </div>
+        {location === "home" ? (
           <Button
             variant="primary"
             onClick={() => {
-              sendTheMovieToDB(props.movie.data);
-              props.handleClose();
+              sendTheMovieToDB(movie.data);
+              handleClose();
             }}
           >
             Add to Fav
           </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
-}
+        ) : (
+          <Button type="submit" variant="primary" >
+            Update Comment
+          </Button>
+        )}
+      </form>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={handleClose}>
+        Close
+      </Button>
+    </Modal.Footer>
+  </Modal>
+);
+        }
 
 export default ModalMovie;
